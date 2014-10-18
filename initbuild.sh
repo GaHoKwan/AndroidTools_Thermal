@@ -448,7 +448,8 @@ case $inp in
 	;;
 esac
 }
-echo -e "正在检测，请稍候......"
+echo -e "正在检测更新，请稍候......"
+	git pull
 	if [ ! -f repo ]; then
 		echo -e "正在解压工具，请稍候......"
 		tar -xvf tools.tar
