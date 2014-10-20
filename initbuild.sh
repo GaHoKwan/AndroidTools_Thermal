@@ -323,15 +323,7 @@ case $configurechoose in
 		installsdk
 		echo -e "\n开始安装ROM编译环境..."
 		sudo apt-get install bison build-essential curl flex g++-multilib g++ gcc-multilib git-core gnupg gperf lib32ncurses5-dev lib32readLine-gplv2-dev lib32z1-dev libesd0-dev libncurses5-dev libsdl1.2-dev libwxgtk2.8-dev libxml2 libxml2-utils lzop squashfs-tools xsltproc pngcrush schedtool zip zlib1g-dev
-		echo -e "\n配置adb环境变量..."
-		sudo cp 51-android.rules /etc/udev/rules.d/
-		sudo chmod a+rx /etc/udev/rules.d/51-android.rules
-		echo "export PATH=$PATH:~/bin/" | sudo tee -a /etc/profile
-		source /etc/profile
-		sudo adb kill-server
-		sudo adb devices
-		echo "\n配置环境完成"
-		read -p "按回车键继续..."
+		addadbrules
 	;;
 esac
 }
@@ -450,7 +442,7 @@ case $inp in
 esac
 }
 echo -e "正在检测更新，请稍候......"
-	git pull >> /dev/null
+	git pull
 	if [ ! -f repo ]; then
 		echo -e "正在解压工具，请稍候......"
 		tar -xvf tools.tar
