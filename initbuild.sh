@@ -1,12 +1,12 @@
 #!/bin/bash
-echo -e "\e[46;37;1m"
+echo -e "\e[40;32;1m"
 clear
 username=`whoami`
 thisDir=`pwd`
 
 addRulesFunc(){
 	read mIdVendor mIdProduct
-	echo "SUBSYSTEM==\"usb\", ATTR{idVendor}==\""$mIdVendor"\", ATTR{idProduct}==\""$mIdProduct"\", MODE=\"0600\"" | sudo tee -a /etc/udev/rules.d/51-android.rules
+	echo "SUBSYSTEM==\"usb\", ATTR{idVendor}==\""$mIdVendor"\", ATTR{idProduct}==\""$mIdProduct"\", MODE=\"0600\", OWNER=\"$username\"" | sudo tee -a /etc/udev/rules.d/51-android.rules
 }
 
 addhosts(){
@@ -38,10 +38,10 @@ esac
 addRules(){
 	clear
 	lsusb
-	echo -e "\nOK 上面列出了所有USB列表,大致内容如下:"
-	echo -e "Bus 00x Device 00x: ID xxxx:xxxx xxxxxxxxxxxxx"
-	echo -e "												 ^		^			 ^"
-	echo -e "第一个是idVendor,第二个是idProduct,第三个相当于是注释吧"
+	echo -e "\nOK 上面列出了所有USB列表,大致内容如下:\n"
+	echo -e "\033[40;37;7mBus 00x Device 00x: ID \033[40;34;7mxxxx\033[40;32;1m:\033[40;33;7mxxxx\033[40;30;0m \033[40;31;7mxxxxxxxxxxxxx\033[40;31;0m"
+	echo -e "\e[40;32;1m"
+	echo -e "如上，蓝色字符串为idVendor,黄色字符串为idProduct\n红色的是一些厂商信息(也可能没有)"
 	echo -e "找第三个里面有没有你的手机厂商的名字,如:HUAWEI,ZTE 什么的"
 	echo -e "当然没找到没关系,第三个什么都没有的就是了\n把idVendor和idProduct 打在下面,空格隔开,如:19d2 ffd0"
 	echo -ne "\n输入:"
@@ -52,6 +52,7 @@ addRules(){
 
 addadbrules(){
 	echo -e "\n配置adb环境变量..."
+	sed -i "s/apar/$username/g" 51-android.rules >> /dev/null
 	sudo cp 51-android.rules /etc/udev/rules.d/
 	sudo chmod a+rx /etc/udev/rules.d/51-android.rules
 	echo "export PATH=$PATH:~/bin/" | sudo tee -a /etc/profile
@@ -449,7 +450,7 @@ case $inp in
 esac
 }
 echo -e "正在检测更新，请稍候......"
-	git pull
+	git pull >> /dev/null
 	if [ ! -f repo ]; then
 		echo -e "正在解压工具，请稍候......"
 		tar -xvf tools.tar
