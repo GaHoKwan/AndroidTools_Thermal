@@ -10,29 +10,26 @@ addRulesFunc(){
 }
 
 addhosts(){
-echo -e "安装hosts请按1，还原hosts请按2(此操作会清空hosts文件，请注意!)"
+echo -e "安装或更新hosts请按1，还原hosts请按2"
 echo -ne "\n选择:"
 read hostchoose
 case $hostchoose in
 	1)
-		if [ `grep -rl "203.208.46.146" /etc/hosts` == ""]; then
-			echo "203.208.46.146 dl-ssl.google.com" | sudo tee -a /etc/hosts
-		elif [ `grep -rl "#203.208.46.146" /etc/hosts` == ""]; then
-			echo -e "host已被安装过了"
-		else
-			echo -e "host曾经被安装过.正在重新安装..."
-			sudo sed -i 's\#203.208.46.146\203.208.46.146\g' /etc/hosts
-		fi
-
+		curl https://raw.githubusercontent.com/txthinking/google-hosts/master/hosts > $thisDir/hosts
+		sudo mv  /etc/hosts /etc/hosts.bak
+		sudo cp -f $thisDir/hosts /etc/hosts
+		rm -rf $thisDir/hosts
+		echo -e "hosts安装完成！"
 	;;
 	2)
-		if [ `grep -rl "#203.208.46.146" /etc/hosts` == ""]; then
-			sudo sed -i 's\203.208.46.146\#203.208.46.146\g' /etc/hosts
+		if [ `grep -rl youtube /etc/hosts` == "/etc/hosts" ]; then
+			sudo mv /etc/hosts.bak /etc/hosts
 		else
-			echo -e "host已被还原过或者你没有安装过hosts"	
+			echo -e "host已被还原过或者你没有安装过hosts"
 		fi
 	;;
 esac
+read -p "按回车键继续..."
 }
 
 addRules(){
@@ -50,8 +47,10 @@ addRules(){
 }
 
 
-addadbrules(){
+installadb(){
 	echo -e "\n配置adb环境变量..."
+	sudo apt-get update
+	sudo apt-get install android-tools-adb android-tools-fastboot
 	sed -i "s/apar/$username/g" 51-android.rules >> /dev/null
 	sudo cp 51-android.rules /etc/udev/rules.d/
 	sudo chmod a+rx /etc/udev/rules.d/51-android.rules
@@ -60,7 +59,6 @@ addadbrules(){
 	sudo adb kill-server
 	sudo adb devices
 	echo "\n配置环境完成"
-	read -p "按回车键继续..."
 }
 
 changecoronlanguage(){
@@ -112,10 +110,16 @@ case $cenopmode in
 esac
 }
 
-repoSource(){
+installrepo(){
 	mkdir -p ~/bin
- 	cp -f repo ~/bin/
+	curl https://raw.githubusercontent.com/baidurom/repo/stable/repo > ~/bin/repo
  	chmod a+x ~/bin/repo
+}
+
+repoSource(){
+	if [ ! -f ~/bin/repo ]; then
+	installrepo
+	fi
 	clear
 	echo -e "------ 同步源码 ------"
 	echo -e "请输入存放源码的地址(可直接把文件夹拖进来):"
@@ -133,9 +137,9 @@ repoSource(){
 }
 
 fastrepoSource(){
-	mkdir -p ~/bin
- 	cp -f repo ~/bin/
- 	chmod a+x ~/bin/repo
+	if [ ! -f ~/bin/repo ]; then
+	installrepo
+	fi
 	clear
 	echo -e "------ 跳过谷歌验证,快速同步源码 ------"
 	echo -e "请输入存放源码的地址(可直接把文件夹拖进来):"
@@ -196,6 +200,51 @@ rm -f ~/adt-bundle/adt_x86.zip
 read -p "按回车键继续..."
 }
 
+installia32(){
+		echo -e "\n开始配置32位运行环境..."
+		echo -e "请选择使用的系统版本:"
+		echo -e "\t1. ubuntu 12.04 及以下"
+		echo -e "\t2. 其他(包括deepin等基于ubuntu 的系统)"
+		echo -en "选择:"
+		read kind
+		if [ "$kind" == "1" ]; then
+			sudo apt-get install ia32-libs
+		elif [ "$kind" == "2" ]; then
+#start
+		cd /etc/apt/sources.list.d #进入apt源列表
+		echo "deb http://old-releases.ubuntu.com/ubuntu/ raring main restricted universe multiverse" | sudo tee ia32-libs-raring.list
+#添加ubuntu 13.04的源，因为13.10的后续版本废弃了ia32-libs
+		sudo apt-get update #更新一下源
+		sudo apt-get install ia32-libs #安装ia32-libs
+		sudo rm ia32-libs-raring.list #恢复源
+		sudo apt-get update #再次更新下源
+#end
+		else
+			initSystemConfigure
+		fi
+}
+
+installJavaSE(){
+	sudo apt-get update
+	echo -e "\n删除自带的openjdk..."
+	sleep 1
+	sudo apt-get purge openjdk-* icedtea-* icedtea6-*
+	echo -e "\n开始安装oracle java developement kit..."
+	sleep 1
+	sudo add-apt-repository ppa:webupd8team/java
+	sudo apt-get update && sudo apt-get install oracle-java6-installer oracle-java7-installer
+	read -p "按回车键继续..."
+	echo "alias java-switch='sudo update-alternatives --config java'" | sudo tee -a /etc/profile
+	source /etc/profile
+	echo -e "你可以使用java-switch命令来切换java版本"
+}
+
+DevEnvSetup(){
+	echo -e "\n开始安装ROM编译环境..."
+	sudo apt-get install bison ccache libc6 build-essential curl flex g++-multilib g++ gcc-multilib git-core gnupg gperf x11proto-core-dev tofrodos libx11-dev:i386 libgl1-mesa-dev libreadline6-dev:i386 libgl1-mesa-glx:i386 lib32ncurses5-dev libncurses5-dev:i386 lib32readLine-gplv2-dev lib32z1-dev libesd0-dev libncurses5-dev libsdl1.2-dev libwxgtk2.8-dev python-markdown libxml2 libxml2-utils lzop squashfs-tools xsltproc pngcrush schedtool zip zlib1g-dev:i386 zlib1g-dev	
+	sudo ln -s /usr/lib/i386-linux-gnu/mesa/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so 
+}
+
 initSystemConfigure(){
 clear
 echo -e "请输入你想安装的环境"
@@ -211,73 +260,19 @@ echo -ne "\n选择:"
 read configurechoose
 case $configurechoose in
 	1)
-		echo -e "\n开始配置32位运行环境..."
-		echo -e "请选择使用的系统版本:"
-		echo -e "\t1. ubuntu 12.04 及以下"
-		echo -e "\t2. 其他(包括deepin等基于ubuntu 的系统)"
-		echo -en "选择:"
-		read kind
-		if [ "$kind" == "1" ]; then
-			sudo apt-get install ia32-libs
-		else
-#start
-		cd /etc/apt/sources.list.d #进入apt源列表
-		echo "deb http://old-releases.ubuntu.com/ubuntu/ raring main restricted universe multiverse" | sudo tee ia32-libs-raring.list
-#添加ubuntu 13.04的源，因为13.10的后续版本废弃了ia32-libs
-		sudo apt-get update #更新一下源
-		sudo apt-get install ia32-libs #安装ia32-libs
-		sudo rm ia32-libs-raring.list #恢复源
-		sudo apt-get update #再次更新下源
-#end
-		fi
+		installia32
 		read -p "按回车键继续..."
 	;;
 	2)
-		sudo apt-get update
-		echo -e "\n删除自带的openjdk..."
-		sleep 1
-		sudo apt-get purge openjdk-* icedtea-* icedtea6-*
-		echo -e "\n开始安装oracle java developement kit..."
-		sleep 1
-		sudo add-apt-repository ppa:webupd8team/java
-		sudo apt-get update && sudo apt-get install oracle-java7-installer 
+		installJavaSE
 		read -p "按回车键继续..."
 	;;
 	3)
-		echo -e "\n开始安装ROM编译环境..."
-		echo -e "请选择使用的系统版本:"
-		echo -e "\t1. ubuntu 12.04 及以下"
-		echo -e "\t2. 其他(包括deepin等基于ubuntu 的系统)"
-		echo -e "\t3. javaSE1.6.0"
-		echo -en "选择:"
-		read kind
-		if [ "$kind" == "1" ]; then
-			sudo apt-get install bison libc6 build-essential curl flex g++-multilib g++ gcc-multilib git-core gnupg gperf libesd0-dev libncurses5-dev libwxgtk2.8-dev lzop squashfs-tools xsltproc pngcrush schedtool zip zlib1g-dev 
-		elif [ "$kind" == "2" ]; then
-			sudo apt-get install bison ccache libc6 build-essential curl flex g++-multilib g++ gcc-multilib git-core gnupg gperf x11proto-core-dev tofrodos libx11-dev:i386 libgl1-mesa-dev libreadline6-dev:i386 libgl1-mesa-glx:i386 lib32ncurses5-dev libncurses5-dev:i386 lib32readLine-gplv2-dev lib32z1-dev libesd0-dev libncurses5-dev libsdl1.2-dev libwxgtk2.8-dev python-markdown libxml2 libxml2-utils lzop squashfs-tools xsltproc pngcrush schedtool zip zlib1g-dev:i386 zlib1g-dev	
-			sudo ln -s /usr/lib/i386-linux-gnu/mesa/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so
-		elif [ "$kind" == "3" ]; then
-			sudo apt-get update
-			echo -e "\n删除自带的openjdk..."
-			sleep 1
-			sudo apt-get purge openjdk-* icedtea-* icedtea6-*
-			echo -e "\n开始安装oracle java developement kit..."
-			sleep 1
-			sudo add-apt-repository ppa:webupd8team/java
-			sudo apt-get update && sudo apt-get install oracle-java6-installer 
-			echo "alias java-switch='sudo update-alternatives --config java'" | sudo tee -a /etc/profile
-			source /etc/profile
-			echo -e "你可以使用java-switch命令来切换java版本"
-		else
-			initSystemConfigure
-		fi
+		DevEnvSetup
 		read -p "按回车键继续..."
-	
 	;;
 	4)
-		sudo apt-get update
-		sudo apt-get install android-tools-adb android-tools-fastboot
-		addadbrules
+		installadb
 		read -p "按回车键继续..."
 	;;
 	5)
@@ -288,42 +283,31 @@ case $configurechoose in
 	;;
 	7)
 		addhosts
-		read -p "按回车键继续..."
 	;;
 	8)
-		echo -e "\n开始配置32位运行环境..."
+		echo -e "\n开始安卓开发环境..."
 		echo -e "请选择使用的系统版本:"
-		echo -e "\t1. ubuntu 12.04 及以下"
-		echo -e "\t2. 其他(包括deepin等基于ubuntu 的系统)"
+		echo -e "\t1. ubuntu 12.04 及以下(此项不安装编译环境）"
+		echo -e "\t2. 其他(包括deepin等基于ubuntu的系统)"
 		echo -en "选择:"
 		read kind
-		if [ $kind -eq 1 ]; then
-			sudo apt-get install ia32-libs
+		if [ "$kind" == "1" ]; then
+			installrepo
+			installia32
+			installJavaSE
+			installadb
+			installsdk
+		elif [ "$kind" == "2" ]; then
+			installrepo
+			installia32
+			installJavaSE
+			installadb
+			installsdk
+			DevEnvSetup
 		else
-#start
-		cd /etc/apt/sources.list.d #进入apt源列表
-		echo "deb http://old-releases.ubuntu.com/ubuntu/ raring main restricted universe multiverse" | sudo tee ia32-libs-raring.list
-#添加ubuntu 13.04的源，因为13.10的后续版本废弃了ia32-libs
-		sudo apt-get update #更新一下源
-		sudo apt-get install ia32-libs #安装ia32-libs
-		sudo rm ia32-libs-raring.list #恢复源
-		sudo apt-get update #再次更新下源
-#end
+			initSystemConfigure
 		fi
-		sudo apt-get update
-		echo -e "\n删除自带的openjdk..."
-		sleep 1
-		sudo apt-get purge openjdk-* icedtea-* icedtea6-*
-		echo -e "\n开始安装oracle java developement kit..."
-		sleep 1
-		sudo add-apt-repository ppa:webupd8team/java
-		sudo apt-get update && sudo apt-get install oracle-java7-installer
-		sudo apt-get install android-tools-adb android-tools-fastboot
-		echo -e "\n开始安装AndroidSDK环境..."
-		installsdk
-		echo -e "\n开始安装ROM编译环境..."
-		sudo apt-get install bison build-essential curl flex g++-multilib g++ gcc-multilib git-core gnupg gperf lib32ncurses5-dev lib32readLine-gplv2-dev lib32z1-dev libesd0-dev libncurses5-dev libsdl1.2-dev libwxgtk2.8-dev libxml2 libxml2-utils lzop squashfs-tools xsltproc pngcrush schedtool zip zlib1g-dev
-		addadbrules
+		read -p "按回车键继续..."
 	;;
 esac
 }
@@ -427,7 +411,7 @@ case $inp in
 	0)
 		cd $thisDir
 		echo -e "正在清理环境文件"
-		rm -rf repo 51-android.rules coron.patch ZipCenOp.jar
+		rm -rf 51-android.rules coron.patch ZipCenOp.jar
 		echo -e "输入c清理残留文件否则直接退出"
 		echo -ne "\n输入c清理或者按回车退出:"
 		read cleanchoose
@@ -443,7 +427,7 @@ esac
 }
 echo -e "正在检测更新，请稍候......"
 	git pull
-	if [ ! -f repo ]; then
+	if [ ! -f 'ZipCenOp.jar' ]; then
 		echo -e "正在解压工具，请稍候......"
 		tar -xvf tools.tar
 	else
