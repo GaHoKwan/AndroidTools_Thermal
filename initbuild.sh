@@ -255,7 +255,7 @@ echo -e "\t4.adb运行环境"
 echo -e "\t5.AndroidSDK运行环境"
 echo -e "\t6.coron项目中文环境"
 echo -e "\t7.hosts环境"
-echo -e "\t8.安卓开发必备环境(上面12345）"
+echo -e "\t8.安卓开发必备环境(上面1234）"
 echo -ne "\n选择:"
 read configurechoose
 case $configurechoose in
@@ -296,13 +296,11 @@ case $configurechoose in
 			installia32
 			installJavaSE
 			installadb
-			installsdk
 		elif [ "$kind" == "2" ]; then
 			installrepo
 			installia32
 			installJavaSE
 			installadb
-			installsdk
 			DevEnvSetup
 		else
 			initSystemConfigure
