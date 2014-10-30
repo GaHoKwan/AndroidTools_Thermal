@@ -70,13 +70,13 @@ echo -ne "\n输入(任意字符退出):"
 read languagechoose
 case $languagechoose in
 	1)
-		cd $coronDir
+		cd ${coronDir//\'//}
 		patch -p1<$thisDir/coron.patch
 		cd $thisDir
 		read -p "按回车键继续..."
 	;;
 	2)
-		cd $coronDir
+		cd ${coronDir//\'//}
 		patch -R -p1<$thisDir/coron.patch
 		cd $thisDir
 		read -p "按回车键继续..."
@@ -129,7 +129,7 @@ repoSource(){
 	echo -e "高通(4.0 4.1 4.2 4.3 4.4),联发科(mtk-4.0 mtk-4.2)"
 	echo -ne "\n输入:"
 	read version
-	cd $sDir
+	cd ${sDir//\'//}
 	repo init -u https://github.com/baidurom/manifest.git -b "coron-"$($version)
 	repo sync
 	cd $thisDir
@@ -149,7 +149,7 @@ fastrepoSource(){
 	echo -e "高通(4.0 4.1 4.2 4.3 4.4),联发科(mtk-4.0 mtk-4.2)"
 	echo -ne "\n输入:"
 	read version
-	cd $sDir
+	cd ${sDir//\'//}
 	repo init --repo-url git://github.com/baidurom/repo.git -u https://github.com/baidurom/manifest.git -b "coron-"$($version) --no-repo-verify
 	repo sync -c --no-clone-bundle --no-tags -j4
 	cd $thisDir
