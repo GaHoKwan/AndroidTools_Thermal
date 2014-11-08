@@ -202,11 +202,6 @@ read -p "按回车键继续..."
 
 installia32(){
 		echo -e "\n开始配置32位运行环境..."
-		echo -e "请选择使用的系统版本:"
-		echo -e "\t1. ubuntu 12.04 及以下"
-		echo -e "\t2. 其他(包括deepin等基于ubuntu 的系统)"
-		echo -en "选择:"
-		read kind
 		if [ "$kind" == "1" ]; then
 			sudo apt-get install ia32-libs
 		elif [ "$kind" == "2" ]; then
@@ -312,24 +307,77 @@ esac
 
 logcat(){
 echo -e "这是抓取log的工具，过程中按ctrl+c退出"
-echo -e "输入1将把所有的log输出到$thisDir/log"
-echo -e "输入2把你想过滤的内容输出到终端并保存到文件"
+echo -e "是否打开logcat颜色显示功能，不选择默认将不使用颜色(y/n)"
+read colorlogchoose
+if [ "$colorlogchoose" == "y" ]; then
+	curl https://raw.githubusercontent.com/GaHoKwan/colored-adb-logcat/master/colored-adb-logcat.py > $thisDir/colored-adb-logcat.py
+	chmod a+x $thisDir/colored-adb-logcat.py
+	logcat="python colored-adb-logcat.py"
+else
+	logcat="adb logcat -b main -b system -b radio"
+fi
+echo -e "正在切换模式..."
+sleep 1
+clear
+echo -e "这是抓取log的工具，过程中按ctrl+c退出"
+echo -e "\t\t1.把所有的log输出 到$thisDir/log"
+echo -e "\t\t2.把你想过滤的内容输出到终端并保存到文件"
+echo -e "\t\t3.抓取VFY到文件"
+echo -e "\t\t4.抓取E/AndroidRuntime到文件"
+echo -e "\t\t5.抓取System.err到文件"
+echo -e "\t\t6.抓取E/错误log到文件"
 echo -ne "\n选择:"
 read logcatmode
 case $logcatmode in
 	1)
-		adb logcat -b main -b system -b radio > $thisDir/log
+		$logcat > $thisDir/log
 	;;
 	2)
-		echo -e "输入你想过滤的内容"
+		echo -e "\n输入你想过滤的内容"
 		read ignoretext
-		adb logcat -b main -b system -b radio |grep $ignoretext|tee $thisDir/log
+		$logcat |grep $ignoretext|tee $thisDir/log
+	;;
+	3)
+		$logcat |grep -C 5 'VFY'|tee $thisDir/log
+	;;
+	4)
+		$logcat |grep 'E/AndroidRuntime'|tee $thisDir/log
+	;;
+	5)
+		$logcat |grep 'System.err'|tee $thisDir/log
+	;;
+	6)
+		$logcat |grep -C 5 'E/'|tee $thisDir/log
 	;;
 	*)
-		echo -e "请输入正确的命令"
-		sleep 2
+		main
 	;;
 esac
+}
+
+screencap(){
+	adb shell /system/bin/screencap -p /data/local/tmp/screenshot.png
+		cd $thisDir
+		adb pull /data/local/tmp/screenshot.png
+		if [ "$?" == "0" ]; then
+		echo -e "截图文件已经输出到$thisDir"
+		else
+		echo -e "截图错误，请检查adb是否正常工作"
+		fi
+		read -p "按回车键继续..."
+}
+
+installkitchen(){
+echo "安装安卓厨房"
+		sudo apt-get install git -y
+		cd ~/
+		git clone https://github.com/kuairom/Android_Kitchen_cn
+		if [ "$?" -ne "0" ];then
+			read -p "安装失败，请检查报错信息，按回车键继续"
+			main
+		fi
+		echo "安卓厨房已下载到主文件夹的Android_Kitchen_cn目录里！"
+		read -p "按回车键继续..."
 }
 
 clean(){
@@ -368,12 +416,7 @@ case $inp in
 		main
 	;;
 	3)
-		echo "安装安卓厨房"
-		sudo apt-get install git -y
-		cd ~/
-		git clone https://github.com/kuairom/Android_Kitchen_cn
-		echo "安卓厨房已下载到主文件夹的Android_Kitchen_cn目录里！"
-		read -p "按回车键继续..."
+		installkitchen
 		main
 	;;
 	4)
@@ -397,13 +440,7 @@ case $inp in
 		main
 	;;
 	9)
-		adb shell /system/bin/screencap -p /data/local/tmp/screenshot.png
-		cd $thisDir
-		adb pull /data/local/tmp/screenshot.png
-		if [ "$?" == "0" ]; then
-		echo -e "截图文件已经输出到$thisDir"
-		fi
-		read -p "按回车键继续..."
+		screencap
 		main
 	;;
 	0)
