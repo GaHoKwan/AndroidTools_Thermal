@@ -326,7 +326,7 @@ echo -e "正在切换模式..."
 sleep 1
 clear
 echo -e "这是抓取log的工具，过程中按ctrl+c退出"
-echo -e "\t\t1.把所有的log输出 到$thisDir/log"
+echo -e "\t\t1.把所有的log输出到$thisDir/log"
 echo -e "\t\t2.把你想过滤的内容输出到终端并保存到文件"
 echo -e "\t\t3.抓取VFY到文件"
 echo -e "\t\t4.抓取E/AndroidRuntime到文件"
@@ -399,7 +399,7 @@ esac
 clean(){
 	cd $thisDir
 	echo -e "正在清理环境文件"
-	rm -rf 51-android.rules coron.patch ZipCenOp.jar
+	rm -rf colored-adb-logcat.py 51-android.rules coron.patch ZipCenOp.jar
 	echo -e "输入c清理残留文件否则直接退出"
 	echo -ne "\n输入c清理或者按回车退出:"
 	read cleanchoose
