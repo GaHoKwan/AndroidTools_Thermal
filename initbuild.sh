@@ -4,32 +4,10 @@ clear
 username=`whoami`
 thisDir=`pwd`
 
+#Environment Tools
 addRulesFunc(){
 	read mIdVendor mIdProduct
 	echo "SUBSYSTEM==\"usb\", ATTR{idVendor}==\""$mIdVendor"\", ATTR{idProduct}==\""$mIdProduct"\", MODE=\"0600\", OWNER=\"$username\"" | sudo tee -a /etc/udev/rules.d/51-android.rules
-}
-
-addhosts(){
-echo -e "安装或更新hosts请按1，还原hosts请按2"
-echo -ne "\n选择:"
-read hostchoose
-case $hostchoose in
-	1)
-		curl https://raw.githubusercontent.com/txthinking/google-hosts/master/hosts > $thisDir/hosts
-		sudo mv  /etc/hosts /etc/hosts.bak
-		sudo cp -f $thisDir/hosts /etc/hosts
-		rm -rf $thisDir/hosts
-		echo -e "hosts安装完成！"
-	;;
-	2)
-		if [ `grep -rl youtube /etc/hosts` == "/etc/hosts" ]; then
-			sudo mv /etc/hosts.bak /etc/hosts
-		else
-			echo -e "host已被还原过或者你没有安装过hosts"
-		fi
-	;;
-esac
-read -p "按回车键继续..."
 }
 
 addRules(){
@@ -46,7 +24,6 @@ addRules(){
 	echo -e "添加成功"
 }
 
-
 installadb(){
 	echo -e "\n配置adb环境变量..."
 	sudo apt-get update
@@ -59,145 +36,6 @@ installadb(){
 	sudo adb kill-server
 	sudo adb devices
 	echo "\n配置环境完成"
-}
-
-changecoronlanguage(){
-echo -e "请输入coron项目所在目录(可以把目录拖进来,)"
-read coronDir
-echo -e "输入1即可把coron项目环境改成中文"
-echo -e "输入2即可把coron项目环境改回英文"
-echo -ne "\n输入(任意字符退出):"
-read languagechoose
-case $languagechoose in
-	1)
-		cd ${coronDir//\'//}
-		patch -p1<$thisDir/coron.patch
-		cd $thisDir
-		read -p "按回车键继续..."
-	;;
-	2)
-		cd ${coronDir//\'//}
-		patch -R -p1<$thisDir/coron.patch
-		cd $thisDir
-		read -p "按回车键继续..."
-	;;
-	*)
-		main
-	;;
-esac
-}
-
-zipcenop(){
-	echo -e "这是刷机包或者apk&jar伪加密工具"
-	echo -e "请把需要加密的刷机包或者apk&jar拖进来"
-	read cenopfile
-	echo -ne "\n选择:"
-	echo -e "输入1加密，输入2解密，输入任意字符退出"
-	echo -ne "\n选择:"
-	read cenopmode
-case $cenopmode in
-	1)
-		java -jar $thisDir/ZipCenOp.jar e ${cenopfile//\'//}
-		read -p "按回车键继续..."
-	;;
-	2)
-		java -jar $thisDir/ZipCenOp.jar r ${cenopfile//\'//}
-		read -p "按回车键继续..."
-	;;
-	*)
-		main
-	;;
-esac
-}
-
-installrepo(){
-	mkdir -p ~/bin
-	curl https://raw.githubusercontent.com/baidurom/repo/stable/repo > ~/bin/repo
- 	chmod a+x ~/bin/repo
-}
-
-repoSource(){
-	if [ ! -f ~/bin/repo ]; then
-	installrepo
-	fi
-	clear
-	echo -e "------ 同步源码 ------"
-	echo -e "请输入存放源码的地址(可直接把文件夹拖进来):"
-	echo -ne "\n输入:"
-	read sDir
-	echo -e "请输入要同步源码的版本号:"
-	echo -e "高通(4.0 4.1 4.2 4.3 4.4),联发科(mtk-4.0 mtk-4.2)"
-	echo -ne "\n输入:"
-	read version
-	cd ${sDir//\'//}
-	repo init -u https://github.com/baidurom/manifest.git -b "coron-"$($version)
-	repo sync
-	cd $thisDir
-	read -p "按回车键继续..."
-}
-
-fastrepoSource(){
-	if [ ! -f ~/bin/repo ]; then
-	installrepo
-	fi
-	clear
-	echo -e "------ 跳过谷歌验证,快速同步源码 ------"
-	echo -e "请输入存放源码的地址(可直接把文件夹拖进来):"
-	echo -ne "\n输入:"
-	read sDir
-	echo -e "请输入要同步源码的版本号:"
-	echo -e "高通(4.0 4.1 4.2 4.3 4.4),联发科(mtk-4.0 mtk-4.2)"
-	echo -ne "\n输入:"
-	read version
-	cd ${sDir//\'//}
-	repo init --repo-url git://github.com/baidurom/repo.git -u https://github.com/baidurom/manifest.git -b "coron-"$($version) --no-repo-verify
-	repo sync -c --no-clone-bundle --no-tags -j4
-	cd $thisDir
-	read -p "按回车键继续..."
-}
-
-installsdk(){
-echo
-echo "下载和配置 Android SDK!!"
-echo "请确保 unzip 已经安装"
-echo
-sudo apt-get install unzip -y
-if [ `getconf LONG_BIT` = "64" ];then
-	echo
-	echo "正在下载 Linux 64位 系统的Android SDK"
-	wget http://dl.google.com/android/adt/adt-bundle-linux-x86_64-20140702.zip
-	echo "下载完成!!"
-	echo "展开文件"
-	mkdir ~/adt-bundle
-	mv adt-bundle-linux-x86_64-20140702.zip ~/adt-bundle/adt_x64.zip
-	cd ~/adt-bundle
-	unzip adt_x64.zip
-	mv -f adt-bundle-linux-x86_64-20140702/* .
-	echo "正在配置"
-	echo -e '\n# Android tools\nexport PATH=${PATH}:~/adt-bundle/sdk/tools\nexport PATH=${PATH}:~/adt-bundle/sdk/platform-tools\nexport PATH=${PATH}:~/bin' >> ~/.bashrc
-	echo -e '\nPATH="$HOME/adt-bundle/sdk/tools:$HOME/adt-bundle/sdk/platform-tools:$PATH"' >> ~/.profile
-	echo "完成!!"
-else
-	echo
-	echo "正在下载 Linux 32位 系统的Android SDK"
-	wget http://dl.google.com/android/adt/adt-bundle-linux-x86-20140702.zip
-	echo "下载完成!!"
-	echo "展开文件"
-	mkdir ~/adt-bundle
-	mv adt-bundle-linux-x86-20140702.zip ~/adt-bundle/adt_x86.zip
-	cd ~/adt-bundle
-	unzip adt_x86.zip
-	mv -f adt-bundle-linux-x86_64-20140702/* .
-	echo "正在配置"
-	echo -e '\n# Android tools\nexport PATH=${PATH}:~/adt-bundle/sdk/tools\nexport PATH=${PATH}:~/adt-bundle/sdk/platform-tools\nexport PATH=${PATH}:~/bin' >> ~/.bashrc
-	echo -e '\nPATH="$HOME/adt-bundle/sdk/tools:$HOME/adt-bundle/sdk/platform-tools:$PATH"' >> ~/.profile
-	echo "完成!!"
-fi
-rm -Rf ~/adt-bundle/adt-bundle-linux-x86_64-20140702
-rm -Rf ~/adt-bundle/adt-bundle-linux-x86-20140702
-rm -f ~/adt-bundle/adt_x64.zip
-rm -f ~/adt-bundle/adt_x86.zip
-read -p "按回车键继续..."
 }
 
 installia32(){
@@ -217,27 +55,6 @@ installia32(){
 		else
 			initSystemConfigure
 		fi
-}
-
-installJavaSE(){
-	sudo apt-get update
-	echo -e "\n删除自带的openjdk..."
-	sleep 1
-	sudo apt-get purge openjdk-* icedtea-* icedtea6-*
-	echo -e "\n开始安装oracle java developement kit..."
-	sleep 1
-	sudo add-apt-repository ppa:webupd8team/java
-	sudo apt-get update && sudo apt-get install oracle-java6-installer oracle-java7-installer
-	read -p "按回车键继续..."
-	echo "alias java-switch='sudo update-alternatives --config java'" | sudo tee -a /etc/profile
-	source /etc/profile
-	echo -e "你可以使用java-switch命令来切换java版本"
-}
-
-DevEnvSetup(){
-	echo -e "\n开始安装ROM编译环境..."
-	sudo apt-get install bison ccache libc6 build-essential curl flex g++-multilib g++ gcc-multilib git-core gnupg gperf x11proto-core-dev tofrodos libx11-dev:i386 libgl1-mesa-dev libreadline6-dev:i386 libgl1-mesa-glx:i386 lib32ncurses5-dev libncurses5-dev:i386 lib32readLine-gplv2-dev lib32z1-dev libesd0-dev libncurses5-dev libsdl1.2-dev libwxgtk2.8-dev python-markdown libxml2 libxml2-utils lzop squashfs-tools xsltproc pngcrush schedtool zip zlib1g-dev:i386 zlib1g-dev	
-	sudo ln -s /usr/lib/i386-linux-gnu/mesa/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so 
 }
 
 initSystemConfigure(){
@@ -305,6 +122,180 @@ case $configurechoose in
 esac
 }
 
+addhosts(){
+echo -e "安装或更新hosts请按1，还原hosts请按2"
+echo -ne "\n选择:"
+read hostchoose
+case $hostchoose in
+	1)
+		curl https://raw.githubusercontent.com/txthinking/google-hosts/master/hosts > $thisDir/hosts
+		sudo mv  /etc/hosts /etc/hosts.bak
+		sudo cp -f $thisDir/hosts /etc/hosts
+		rm -rf $thisDir/hosts
+		echo -e "hosts安装完成！"
+	;;
+	2)
+		if [ `grep -rl youtube /etc/hosts` == "/etc/hosts" ]; then
+			sudo mv /etc/hosts.bak /etc/hosts
+		else
+			echo -e "host已被还原过或者你没有安装过hosts"
+		fi
+	;;
+esac
+read -p "按回车键继续..."
+}
+
+changecoronlanguage(){
+echo -e "请输入coron项目所在目录(可以把目录拖进来,)"
+read coronDir
+echo -e "输入1即可把coron项目环境改成中文"
+echo -e "输入2即可把coron项目环境改回英文"
+echo -ne "\n输入(任意字符退出):"
+read languagechoose
+case $languagechoose in
+	1)
+		cd ${coronDir//\'//}
+		patch -p1<$thisDir/coron.patch
+		cd $thisDir
+		read -p "按回车键继续..."
+	;;
+	2)
+		cd ${coronDir//\'//}
+		patch -R -p1<$thisDir/coron.patch
+		cd $thisDir
+		read -p "按回车键继续..."
+	;;
+	*)
+		main
+	;;
+esac
+}
+
+installsdk(){
+echo
+echo "下载和配置 Android SDK!!"
+echo "请确保 unzip 已经安装"
+echo
+sudo apt-get install unzip -y
+if [ `getconf LONG_BIT` = "64" ];then
+	echo
+	echo "正在下载 Linux 64位 系统的Android SDK"
+	wget http://dl.google.com/android/adt/adt-bundle-linux-x86_64-20140702.zip
+	echo "下载完成!!"
+	echo "展开文件"
+	mkdir ~/adt-bundle
+	mv adt-bundle-linux-x86_64-20140702.zip ~/adt-bundle/adt_x64.zip
+	cd ~/adt-bundle
+	unzip adt_x64.zip
+	mv -f adt-bundle-linux-x86_64-20140702/* .
+	echo "正在配置"
+	echo -e '\n# Android tools\nexport PATH=${PATH}:~/adt-bundle/sdk/tools\nexport PATH=${PATH}:~/adt-bundle/sdk/platform-tools\nexport PATH=${PATH}:~/bin' >> ~/.bashrc
+	echo -e '\nPATH="$HOME/adt-bundle/sdk/tools:$HOME/adt-bundle/sdk/platform-tools:$PATH"' >> ~/.profile
+	echo "完成!!"
+else
+	echo
+	echo "正在下载 Linux 32位 系统的Android SDK"
+	wget http://dl.google.com/android/adt/adt-bundle-linux-x86-20140702.zip
+	echo "下载完成!!"
+	echo "展开文件"
+	mkdir ~/adt-bundle
+	mv adt-bundle-linux-x86-20140702.zip ~/adt-bundle/adt_x86.zip
+	cd ~/adt-bundle
+	unzip adt_x86.zip
+	mv -f adt-bundle-linux-x86_64-20140702/* .
+	echo "正在配置"
+	echo -e '\n# Android tools\nexport PATH=${PATH}:~/adt-bundle/sdk/tools\nexport PATH=${PATH}:~/adt-bundle/sdk/platform-tools\nexport PATH=${PATH}:~/bin' >> ~/.bashrc
+	echo -e '\nPATH="$HOME/adt-bundle/sdk/tools:$HOME/adt-bundle/sdk/platform-tools:$PATH"' >> ~/.profile
+	echo "完成!!"
+fi
+rm -Rf ~/adt-bundle/adt-bundle-linux-x86_64-20140702
+rm -Rf ~/adt-bundle/adt-bundle-linux-x86-20140702
+rm -f ~/adt-bundle/adt_x64.zip
+rm -f ~/adt-bundle/adt_x86.zip
+read -p "按回车键继续..."
+}
+
+installkitchen(){
+echo "安装安卓厨房"
+		sudo apt-get install git -y
+		cd ~/
+		git clone https://github.com/kuairom/Android_Kitchen_cn
+		if [ "$?" -ne "0" ];then
+			read -p "安装失败，请检查报错信息，按回车键继续"
+			main
+		fi
+		echo "安卓厨房已下载到主文件夹的Android_Kitchen_cn目录里！"
+		read -p "按回车键继续..."
+}
+
+installJavaSE(){
+	sudo apt-get update
+	echo -e "\n删除自带的openjdk..."
+	sleep 1
+	sudo apt-get purge openjdk-* icedtea-* icedtea6-*
+	echo -e "\n开始安装oracle java developement kit..."
+	sleep 1
+	sudo add-apt-repository ppa:webupd8team/java
+	sudo apt-get update && sudo apt-get install oracle-java6-installer oracle-java7-installer
+	read -p "按回车键继续..."
+	echo "alias java-switch='sudo update-alternatives --config java'" | sudo tee -a /etc/profile
+	source /etc/profile
+	echo -e "你可以使用java-switch命令来切换java版本"
+}
+
+DevEnvSetup(){
+	echo -e "\n开始安装ROM编译环境..."
+	sudo apt-get install bison ccache libc6 build-essential curl flex g++-multilib g++ gcc-multilib git-core gnupg gperf x11proto-core-dev tofrodos libx11-dev:i386 libgl1-mesa-dev libreadline6-dev:i386 libgl1-mesa-glx:i386 lib32ncurses5-dev libncurses5-dev:i386 lib32readLine-gplv2-dev lib32z1-dev libesd0-dev libncurses5-dev libsdl1.2-dev libwxgtk2.8-dev python-markdown libxml2 libxml2-utils lzop squashfs-tools xsltproc pngcrush schedtool zip zlib1g-dev:i386 zlib1g-dev	
+	sudo ln -s /usr/lib/i386-linux-gnu/mesa/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so 
+}
+
+#Development tools
+installrepo(){
+	mkdir -p ~/bin
+	curl https://raw.githubusercontent.com/baidurom/repo/stable/repo > ~/bin/repo
+ 	chmod a+x ~/bin/repo
+}
+
+repoSource(){
+	if [ ! -f ~/bin/repo ]; then
+	installrepo
+	fi
+	clear
+	echo -e "------ 同步源码 ------"
+	echo -e "请输入存放源码的地址(可直接把文件夹拖进来):"
+	echo -ne "\n输入:"
+	read sDir
+	echo -e "请输入要同步源码的版本号:"
+	echo -e "高通(4.0 4.1 4.2 4.3 4.4),联发科(mtk-4.0 mtk-4.2)"
+	echo -ne "\n输入:"
+	read version
+	cd ${sDir//\'//}
+	repo init -u https://github.com/baidurom/manifest.git -b "coron-"$($version)
+	repo sync
+	cd $thisDir
+	read -p "按回车键继续..."
+}
+
+fastrepoSource(){
+	if [ ! -f ~/bin/repo ]; then
+	installrepo
+	fi
+	clear
+	echo -e "------ 跳过谷歌验证,快速同步源码 ------"
+	echo -e "请输入存放源码的地址(可直接把文件夹拖进来):"
+	echo -ne "\n输入:"
+	read sDir
+	echo -e "请输入要同步源码的版本号:"
+	echo -e "高通(4.0 4.1 4.2 4.3 4.4),联发科(mtk-4.0 mtk-4.2)"
+	echo -ne "\n输入:"
+	read version
+	cd ${sDir//\'//}
+	repo init --repo-url git://github.com/baidurom/repo.git -u https://github.com/baidurom/manifest.git -b "coron-"$($version) --no-repo-verify
+	repo sync -c --no-clone-bundle --no-tags -j4
+	cd $thisDir
+	read -p "按回车键继续..."
+}
+
 logcat(){
 echo -e "这是抓取log的工具，过程中按ctrl+c退出"
 echo -e "是否打开logcat颜色显示功能，不选择默认将不使用颜色(y/n)"
@@ -367,24 +358,43 @@ screencap(){
 		read -p "按回车键继续..."
 }
 
-installkitchen(){
-echo "安装安卓厨房"
-		sudo apt-get install git -y
-		cd ~/
-		git clone https://github.com/kuairom/Android_Kitchen_cn
-		if [ "$?" -ne "0" ];then
-			read -p "安装失败，请检查报错信息，按回车键继续"
-			main
-		fi
-		echo "安卓厨房已下载到主文件夹的Android_Kitchen_cn目录里！"
+zipcenop(){
+	echo -e "这是刷机包或者apk&jar伪加密工具"
+	echo -e "请把需要加密的刷机包或者apk&jar拖进来"
+	read cenopfile
+	echo -ne "\n选择:"
+	echo -e "输入1加密，输入2解密，输入任意字符退出"
+	echo -ne "\n选择:"
+	read cenopmode
+case $cenopmode in
+	1)
+		java -jar $thisDir/ZipCenOp.jar e ${cenopfile//\'//}
 		read -p "按回车键继续..."
+	;;
+	2)
+		java -jar $thisDir/ZipCenOp.jar r ${cenopfile//\'//}
+		read -p "按回车键继续..."
+	;;
+	*)
+		main
+	;;
+esac
 }
 
 clean(){
-	echo -e "正在清理残留文件"
-	rm -rf log
-	rm -rf screenshot.png
-	read -p "按回车键继续..."
+	cd $thisDir
+	echo -e "正在清理环境文件"
+	rm -rf 51-android.rules coron.patch ZipCenOp.jar
+	echo -e "输入c清理残留文件否则直接退出"
+	echo -ne "\n输入c清理或者按回车退出:"
+	read cleanchoose
+	if [ "$cleanchoose" == "c" ]; then
+		echo -e "正在清理残留文件"
+		rm -rf log
+		rm -rf screenshot.png
+		read -p "按回车键继续..."
+	fi
+	echo -e "\e[0m"
 }
  
 main(){
@@ -444,22 +454,14 @@ case $inp in
 		main
 	;;
 	0)
-		cd $thisDir
-		echo -e "正在清理环境文件"
-		rm -rf 51-android.rules coron.patch ZipCenOp.jar
-		echo -e "输入c清理残留文件否则直接退出"
-		echo -ne "\n输入c清理或者按回车退出:"
-		read cleanchoose
-		if [ "$cleanchoose" == "c" ]; then
-			clean
-		fi
-		echo -e "\e[0m"
+		clean
 	;;
 	*)
 	main
 	;;
 esac
 }
+
 echo -e "正在检测更新，请稍候......"
 	git pull
 	if [ ! -f 'ZipCenOp.jar' ]; then
