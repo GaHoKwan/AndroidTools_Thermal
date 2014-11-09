@@ -39,7 +39,15 @@ installadb(){
 }
 
 installia32(){
+		if [ "$kind" == "" ]; then
+		echo -e "\n开始安卓开发环境..."
+		echo -e "请选择使用的系统版本:"
+		echo -e "\t1. ubuntu 12.04 及以下(此项不安装编译环境）"
+		echo -e "\t2. 其他(包括deepin等基于ubuntu的系统)"
+		echo -en "选择:"
+		read kind
 		echo -e "\n开始配置32位运行环境..."
+		fi
 		if [ "$kind" == "1" ]; then
 			sudo apt-get install ia32-libs
 		elif [ "$kind" == "2" ]; then
