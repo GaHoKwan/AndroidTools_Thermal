@@ -107,8 +107,10 @@ case $configurechoose in
 	8)
 		echo -e "\n开始安卓开发环境..."
 		echo -e "请选择使用的系统版本:"
+		echo -e "注意：由于apt源的完整性不足，选择1则不会安装编译环境"
 		echo -e "\t1. ubuntu 12.04 及以下(此项不安装编译环境）"
-		echo -e "\t2. 其他(包括deepin等基于ubuntu的系统)"
+		echo -e "\t2. 其他(包括deepin等基于ubuntu14.04的系统)"
+		echo -e "\t3. Linux mint 17(此项不安装ia32因为Mint系统自带）"
 		echo -en "选择:"
 		read kind
 		if [ "$kind" == "1" ]; then
@@ -119,6 +121,11 @@ case $configurechoose in
 		elif [ "$kind" == "2" ]; then
 			installrepo
 			installia32
+			installJavaSE
+			installadb
+			DevEnvSetup
+		elif [ "$kind" == "3" ]; then
+			installrepo
 			installJavaSE
 			installadb
 			DevEnvSetup
