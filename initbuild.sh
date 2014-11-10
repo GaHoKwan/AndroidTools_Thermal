@@ -28,6 +28,8 @@ installadb(){
 	echo -e "\n配置adb环境变量..."
 	sudo apt-get update
 	sudo apt-get install android-tools-adb android-tools-fastboot
+	curl https://raw.githubusercontent.com/GaHoKwan/Android-udev-rules/master/51-android.rules > $thisDir/51-android.rules
+	cd $thisDir
 	sed -i "s/apar/$username/g" 51-android.rules >> /dev/null
 	sudo cp 51-android.rules /etc/udev/rules.d/
 	sudo chmod a+rx /etc/udev/rules.d/51-android.rules
