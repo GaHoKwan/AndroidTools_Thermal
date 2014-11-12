@@ -24,10 +24,23 @@ addRules(){
 	echo -e "添加成功"
 }
 
+installadbini(){
+	echo -e "正在安装adb_usb.ini环境"
+	cd $thisDir
+	git clone https://github.com/GaHoKwan/adbusbini
+	if [ "$?" -ne "0" ];then
+		echo -e "下载环境配置文件错误，请检查错误！"
+	else
+		rm -rf ~/.android
+		mv $thisDir/adbusbini ~/.android
+	fi
+}
+
 installadb(){
 	echo -e "\n配置adb环境变量..."
 	sudo apt-get update
 	sudo apt-get install android-tools-adb android-tools-fastboot
+	installadbini
 	curl https://raw.githubusercontent.com/GaHoKwan/Android-udev-rules/master/51-android.rules > $thisDir/51-android.rules
 	cd $thisDir
 	sed -i "s/apar/$username/g" 51-android.rules >> /dev/null
