@@ -31,8 +31,8 @@ installadbini(){
 	if [ "$?" -ne "0" ];then
 		echo -e "下载环境配置文件错误，请检查错误！"
 	else
-		rm -rf ~/.android
-		mv $thisDir/adbusbini ~/.android
+		sudo rm -rf ~/.android
+		sudo mv $thisDir/adbusbini ~/.android
 	fi
 }
 
@@ -43,7 +43,6 @@ installadb(){
 	installadbini
 	curl https://raw.githubusercontent.com/GaHoKwan/Android-udev-rules/master/51-android.rules > $thisDir/51-android.rules
 	cd $thisDir
-	sed -i "s/apar/$username/g" 51-android.rules >> /dev/null
 	sudo cp 51-android.rules /etc/udev/rules.d/
 	sudo chmod a+rx /etc/udev/rules.d/51-android.rules
 	echo "export PATH=$PATH:~/bin/" | sudo tee -a /etc/profile
@@ -260,16 +259,17 @@ echo "安装安卓厨房"
 
 installJavaSE(){
 	sudo apt-get update
-	echo -e "\n删除自带的openjdk..."
-	sleep 1
-	sudo apt-get purge openjdk-* icedtea-* icedtea6-*
 	echo -e "\n开始安装oracle java developement kit..."
 	sleep 1
 	sudo add-apt-repository ppa:webupd8team/java
-	sudo apt-get update && sudo apt-get install oracle-java6-installer oracle-java7-installer
+	sudo apt-get update && sudo apt-get install oracle-java6-installer
+	echo -e "\n安装openjdk7..."
+	sleep 1
+	sudo apt-get install  openjdk-7-jdk
 	read -p "按回车键继续..."
-	echo "alias java-switch='sudo update-alternatives --config java'" | sudo tee -a /etc/profile
-	source /etc/profile
+	echo "alias java-switch='sudo update-alternatives --config java'" | sudo tee -a ~/.bashrc
+	echo "alias javac-switch='sudo update-alternatives --config javac'" | sudo tee -a ~/.bashrc
+	source ~/.bashrc
 	echo -e "你可以使用java-switch命令来切换java版本"
 }
 
