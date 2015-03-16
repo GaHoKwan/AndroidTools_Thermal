@@ -267,10 +267,14 @@ installJavaSE(){
 	sleep 1
 	sudo apt-get install  openjdk-7-jdk
 	read -p "按回车键继续..."
-	echo "alias java-switch='sudo update-alternatives --config java'" | sudo tee -a ~/.bashrc
-	echo "alias javac-switch='sudo update-alternatives --config javac'" | sudo tee -a ~/.bashrc
+	echo 'alias jar-switch="sudo update-alternatives --config jar"' | sudo tee -a ~/.bashrc
+	echo -e "你可以使用jar-switch命令来切换jar版本"
+	echo 'alias java-switch="sudo update-alternatives --config java"' | sudo tee -a ~/.bashrc
+	echo 'alias javac-switch="sudo update-alternatives --config javac"' | sudo tee -a ~/.bashrc
+	echo 'alias javah-switch="sudo update-alternatives --config javah"' | sudo tee -a ~/.bashrc
+	echo 'alias javap-switch="sudo update-alternatives --config javap"' | sudo tee -a ~/.bashrc
 	source ~/.bashrc
-	echo -e "你可以使用java-switch命令来切换java版本"
+	echo -e "你可以使用java(c/h/p)-switch命令来切换java(c/h/p)版本"
 }
 
 DevEnvSetup(){
