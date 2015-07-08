@@ -8,6 +8,7 @@ thisDir=`pwd`
 addRulesFunc(){
 	read mIdVendor mIdProduct
 	echo "SUBSYSTEM==\"usb\", ATTR{idVendor}==\""$mIdVendor"\", ATTR{idProduct}==\""$mIdProduct"\", MODE=\"0600\", OWNER=\"$username\"" | sudo tee -a /etc/udev/rules.d/51-android.rules
+	sudo /etc/init.d/udev restart
 }
 
 addRules(){
@@ -45,6 +46,7 @@ installadb(){
 	cd $thisDir
 	sudo cp 51-android.rules /etc/udev/rules.d/
 	sudo chmod a+rx /etc/udev/rules.d/51-android.rules
+	sudo /etc/init.d/udev restart
 	echo "export PATH=$PATH:~/bin/" | sudo tee -a /etc/profile
 	source /etc/profile
 	sudo adb kill-server
@@ -70,7 +72,19 @@ installia32(){
 		echo "deb http://old-releases.ubuntu.com/ubuntu/ raring main restricted universe multiverse" | sudo tee ia32-libs-raring.list
 #添加ubuntu 13.04的源，因为13.10的后续版本废弃了ia32-libs
 		sudo apt-get update #更新一下源
-		sudo apt-get install ia32-libs #安装ia32-libs
+		if [ "$?" == "0" ]; then
+			echo -e "下载完成"
+			else
+			echo -e "下载失败，正在重新尝试"
+			sudo apt-get update
+		fi
+			sudo apt-get install ia32-libs #安装ia32-libs
+		if [ "$?" == "0" ]; then
+			echo -e "下载完成"
+			else
+			echo -e "下载失败，正在重新尝试"
+			sudo apt-get install ia32-libs
+		fi
 		sudo rm ia32-libs-raring.list #恢复源
 		sudo apt-get update #再次更新下源
 #end
@@ -87,7 +101,7 @@ echo -e "\t2.JavaSE(Oracle Java JDK)"
 echo -e "\t3.aosp&cm&recovery编译环境"
 echo -e "\t4.adb运行环境"
 echo -e "\t5.AndroidSDK运行环境"
-echo -e "\t6.coron项目中文环境"
+echo -e "\t6.flyme项目中文环境"
 echo -e "\t7.hosts环境"
 echo -e "\t8.安卓开发必备环境(上面1234）"
 echo -ne "\n选择:"
@@ -113,10 +127,12 @@ case $configurechoose in
 		installsdk
 	;;
 	6)
-		changecoronlanguage
+		echo -e "\n由于翻译工作暂未完成，该功能将于后续版本开放，按回车键继续"
+		read anykey
 	;;
 	7)
-		addhosts
+		echo -e "\n由于hosts的不稳定性，所以于flyme专版去除该功能，按回车键继续"
+		read anykey
 	;;
 	8)
 		echo -e "\n开始安卓开发环境..."
@@ -174,23 +190,23 @@ esac
 read -p "按回车键继续..."
 }
 
-changecoronlanguage(){
-echo -e "请输入coron项目所在目录(可以把目录拖进来,)"
-read coronDir
-echo -e "输入1即可把coron项目环境改成中文"
-echo -e "输入2即可把coron项目环境改回英文"
+changeflymelanguage(){
+echo -e "请输入flyme项目所在目录(可以把目录拖进来,)"
+read flymeDir
+echo -e "输入1即可把flyme项目环境改成中文"
+echo -e "输入2即可把flyme项目环境改回英文"
 echo -ne "\n输入(任意字符退出):"
 read languagechoose
 case $languagechoose in
 	1)
-		cd ${coronDir//\'//}
-		patch -p1<$thisDir/coron.patch
+		cd ${flymeDir//\'//}
+		patch -p1<$thisDir/flyme.patch
 		cd $thisDir
 		read -p "按回车键继续..."
 	;;
 	2)
-		cd ${coronDir//\'//}
-		patch -R -p1<$thisDir/coron.patch
+		cd ${flymeDir//\'//}
+		patch -R -p1<$thisDir/flyme.patch
 		cd $thisDir
 		read -p "按回车键继续..."
 	;;
@@ -263,9 +279,21 @@ installJavaSE(){
 	sleep 1
 	sudo add-apt-repository ppa:webupd8team/java
 	sudo apt-get update && sudo apt-get install oracle-java6-installer
+	if [ "$?" == "0" ]; then
+		echo -e "下载完成"
+		else
+		echo -e "下载失败，正在重新尝试"
+		sudo apt-get install  openjdk-7-jdk
+	fi
 	echo -e "\n安装openjdk7..."
 	sleep 1
 	sudo apt-get install  openjdk-7-jdk
+	if [ "$?" == "0" ]; then
+		echo -e "下载完成"
+		else
+		echo -e "下载失败，正在重新尝试"
+		sudo apt-get install  openjdk-7-jdk
+	fi
 	read -p "按回车键继续..."
 	echo 'alias jar-switch="sudo update-alternatives --config jar"' | sudo tee -a ~/.bashrc
 	echo -e "你可以使用jar-switch命令来切换jar版本"
@@ -280,13 +308,19 @@ installJavaSE(){
 DevEnvSetup(){
 	echo -e "\n开始安装ROM编译环境..."
 	sudo apt-get install bison ccache libc6 build-essential curl flex g++-multilib g++ gcc-multilib git-core gnupg gperf x11proto-core-dev tofrodos libx11-dev:i386 libgl1-mesa-dev libreadline6-dev:i386 libgl1-mesa-glx:i386 lib32ncurses5-dev libncurses5-dev:i386 lib32readLine-gplv2-dev lib32z1-dev libesd0-dev libncurses5-dev libsdl1.2-dev libwxgtk2.8-dev python-markdown libxml2 libxml2-utils lzop squashfs-tools xsltproc pngcrush schedtool zip zlib1g-dev:i386 zlib1g-dev	
+	if [ "$?" == "0" ]; then
+		echo -e "下载完成"
+		else
+		echo -e "下载失败，正在重新尝试"
+		DevEnvSetup
+	fi
 	sudo ln -s /usr/lib/i386-linux-gnu/mesa/libGL.so.1 /usr/lib/i386-linux-gnu/libGL.so 
 }
 
 #Development tools
 installrepo(){
 	mkdir -p ~/bin
-	curl https://raw.githubusercontent.com/baidurom/repo/stable/repo > ~/bin/repo
+	curl https://raw.githubusercontent.com/FlymeOS/manifest/lollipop-5.0/repo > ~/bin/repo
  	chmod a+x ~/bin/repo
 }
 
@@ -299,13 +333,15 @@ repoSource(){
 	echo -e "请输入存放源码的地址(可直接把文件夹拖进来):"
 	echo -ne "\n输入:"
 	read sDir
-	echo -e "请输入要同步源码的版本号:"
-	echo -e "高通(4.0 4.1 4.2 4.3 4.4),联发科(mtk-4.0 mtk-4.2)"
-	echo -ne "\n输入:"
-	read version
 	cd ${sDir//\'//}
-	repo init -u https://github.com/baidurom/manifest.git -b "coron-"$($version)
-	repo sync
+	repo init -u https://github.com/FlymeOS/manifest.git -b lollipop-5.0
+	repo sync-j4
+	if [ "$?" == "0" ]; then
+		echo -e "同步完成"
+		else
+		echo -e "同步失败，正在重新尝试"
+		repo sync -c --no-clone-bundle -j4
+	fi
 	cd $thisDir
 	read -p "按回车键继续..."
 }
@@ -319,15 +355,17 @@ fastrepoSource(){
 	echo -e "请输入存放源码的地址(可直接把文件夹拖进来):"
 	echo -ne "\n输入:"
 	read sDir
-	echo -e "请输入要同步源码的版本号:"
-	echo -e "高通(4.0 4.1 4.2 4.3 4.4),联发科(mtk-4.0 mtk-4.2)"
-	echo -ne "\n输入:"
-	read version
 	cd ${sDir//\'//}
-	repo init --repo-url git://github.com/baidurom/repo.git -u https://github.com/baidurom/manifest.git -b "coron-"$($version) --no-repo-verify
-	repo sync -c --no-clone-bundle --no-tags -j4
+	repo init --repo-url git://github.com/FlymeOS/repo.git -u https://github.com/FlymeOS/manifest.git -b lollipop-5.0 --no-repo-verify
+	repo sync -c --no-clone-bundle -j4
+	if [ "$?" == "0" ]; then
+		echo -e "同步完成"
+		else
+		echo -e "同步失败，正在重新尝试"
+		repo sync -c --no-clone-bundle -j4
+	fi
+		read -p "按回车键继续..."
 	cd $thisDir
-	read -p "按回车键继续..."
 }
 
 logcat(){
@@ -418,7 +456,7 @@ esac
 clean(){
 	cd $thisDir
 	echo -e "正在清理环境文件"
-	rm -rf colored-adb-logcat.py 51-android.rules coron.patch ZipCenOp.jar
+	rm -rf colored-adb-logcat.py 51-android.rules flyme.patch
 	echo -e "输入c清理残留文件否则直接退出"
 	echo -ne "\n输入c清理或者按回车退出:"
 	read cleanchoose
@@ -433,8 +471,8 @@ clean(){
  
 main(){
 clear 
-echo -e "Android开发环境一键搭载脚本及开发工具"
-echo "--作者：Modificator & 嘉豪仔_Kwan"
+echo -e "Android开发环境一键搭载脚本及开发工具-Flyme专版"
+echo "--作者： 嘉豪仔_Kwan (QQ:625336209 微博：www.weibo.com/kwangaho)"
 echo -e "			输入命令号码 :\n"
 echo -e "\t\t1. 使用root权限启动adb"
 echo -e "\t\t2. 设置环境变量"
@@ -496,15 +534,7 @@ case $inp in
 esac
 }
 
-echo -e "正在检测更新，请稍候......"
-	git pull
-	if [ ! -f 'ZipCenOp.jar' ]; then
-		echo -e "正在解压工具，请稍候......"
-		tar -xvf tools.tar
-	else
-		echo -e "工具已存在，跳过解压......"
-	fi
-sleep 1
 echo -e "说明：本脚本仅适用于Ubuntu及各大Ubuntu发行版使用，并且建议在14.04Lts版本下使用"
-read -p "按回车键继续..."
+echo -ne "\n请输入你的root密码:" 
+sudo echo -e "正在进入主界面..."
 main

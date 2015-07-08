@@ -3,8 +3,6 @@ AndroidDevEnvironment_Building_Tools
 
 安卓开发环境搭载工具
 
-Modificator(yunshangcn@gmail.com) 
-
 嘉豪仔_Kwan(kwangaho@gmail.com)
 
 提供的一键搭载环境工具。
