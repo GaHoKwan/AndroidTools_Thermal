@@ -101,9 +101,8 @@ echo -e "\t2.JavaSE(Oracle Java JDK)"
 echo -e "\t3.aosp&cm&recovery编译环境"
 echo -e "\t4.adb运行环境"
 echo -e "\t5.AndroidSDK运行环境"
-echo -e "\t6.flyme项目中文环境"
-echo -e "\t7.hosts环境"
-echo -e "\t8.安卓开发必备环境(上面1234）"
+echo -e "\t6.hosts环境"
+echo -e "\t7.安卓开发必备环境(上面1234）"
 echo -ne "\n选择:"
 read configurechoose
 case $configurechoose in
@@ -127,14 +126,10 @@ case $configurechoose in
 		installsdk
 	;;
 	6)
-		echo -e "\n由于翻译工作暂未完成，该功能将于后续版本开放，按回车键继续"
+		addhosts
 		read anykey
 	;;
 	7)
-		echo -e "\n由于hosts的不稳定性，所以于flyme专版去除该功能，按回车键继续"
-		read anykey
-	;;
-	8)
 		echo -e "\n开始安卓开发环境..."
 		echo -e "请选择使用的系统版本:"
 		echo -e "注意：由于apt源的完整性不足，选择1则不会安装编译环境"
@@ -190,31 +185,6 @@ esac
 read -p "按回车键继续..."
 }
 
-changeflymelanguage(){
-echo -e "请输入flyme项目所在目录(可以把目录拖进来,)"
-read flymeDir
-echo -e "输入1即可把flyme项目环境改成中文"
-echo -e "输入2即可把flyme项目环境改回英文"
-echo -ne "\n输入(任意字符退出):"
-read languagechoose
-case $languagechoose in
-	1)
-		cd ${flymeDir//\'//}
-		patch -p1<$thisDir/flyme.patch
-		cd $thisDir
-		read -p "按回车键继续..."
-	;;
-	2)
-		cd ${flymeDir//\'//}
-		patch -R -p1<$thisDir/flyme.patch
-		cd $thisDir
-		read -p "按回车键继续..."
-	;;
-	*)
-		main
-	;;
-esac
-}
 
 installsdk(){
 echo
@@ -471,7 +441,7 @@ clean(){
  
 main(){
 clear 
-echo -e "Android开发环境一键搭载脚本及开发工具-Flyme专版"
+echo -e "Android开发环境一键搭载脚本及开发工具"
 echo "--作者： 嘉豪仔_Kwan (QQ:625336209 微博：www.weibo.com/kwangaho)"
 echo -e "			输入命令号码 :\n"
 echo -e "\t\t1. 使用root权限启动adb"
