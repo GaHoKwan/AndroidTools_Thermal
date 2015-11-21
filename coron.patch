@@ -1,0 +1,670 @@
+--- help/help.xml
++++ help.new/help.xml
+@@ -8,9 +8,9 @@
+ 	<item name="tale" code="255">
+ 		<detail>
+ 
+-		Here is a long story, we have been telling it for a long time, and still believe somebody will continue it.
++		 这是一个很长的故事,我们已经讲了很长一段时间,但我们仍然相信有人会继续。
+ 
+-                                    The tale of CORON will never stop.
++                                    CORON的故事永远不会停止 .
+ 
+        ────────────────────────────────────────────────────────────────────────────────────
+ 
+@@ -26,38 +26,38 @@
+ 
+        ────────────────────────────────────────────────────────────────────────────────────
+ 
+-		What is CORON?
+-		  * CORON is an open source project for Android ROM porting.
+-		  * With plentiful tools of CORON, developers could board ROM on target device in one step.
+-		  * In CORON, courses of Android porting is available, including video and online tutorials.  
++		什么是CORON?
++		  * CORON是一个开源的Android ROM porting项目.
++		  * 利用CORON丰富的工具，开发者可以在最快的时间里为一台设备适配上最新的百度云OS.
++		  * 在CORON里，所有是课程都是可以利用的，包括视频课程和在线课程.  
+ 
+-		Why named CORON?
++		为什么要叫CORON?(此处不作翻译)
+ 		  * CORON stands for CO-operated RON(m), born to be cooperative with ROM developers;
+ 		  * CORON stands for RON(m) Over Cloud, provides access of huge remote servers' ablity;
+ 		  * CORON is also an island, paradise of divers. It shows simple and tasteful feelings.
+ 
+-		How to use CORON?
+-		  After setup enviornment of CORON, type command `coron` to see the usage. 
+-		  The amazing tools may tell you it is so hard to put CORON down.
+-		  You local directory of CORON is like:
++		怎样使用CORON?
++		  在初始化CORON环境之后，运行命令'coron'去查看使用方法. 
++		  神器的工具会让你无法放得下CORON.
++		  CORON的目录就像这样:
+ 
+-		  coron                        │  # The root of coron
+-		    ├── manifest               │  # Introduce to coron, including tutorials
++		  coron                        │  # 这是CORON的根目录
++		    ├── manifest               │  # CORON的介绍文件，包括教程的存放地点
+ 		    │                          │
+-		    ├── baidu                  │  # Holding all the baidu concerned
++		    ├── baidu                  │  # 所有有关百度的支持
+ 		    │     ├── frameworks       │
+-		    │     │      └── overlay   │  # Overlay resources of framework
+-		    │     └── release          │  # Released Apks and Jars
++		    │     │      └── overlay   │  # 百度的框架资源存放地点
++		    │     └── release          │  # 已经发布的apk和jar，也叫百度底包
+ 		    │                          │
+-		    ├── devices                │  # Holding all the porting devices
+-		    │     ├── base             │  # The base of all other devices.
+-		    │     └── yourdevice       │  # Your own device to be ported
++		    ├── devices                │  # 所有有关百度的参考机型
++		    │     ├── base             │  # 其他所有机型的插桩基础
++		    │     └── yourdevice       │  # 这是你的机型根目录
+ 		    │                          │
+-		    ├── build                  │  # Build environment
+-		    └── tools                  │  # Tools
++		    ├── build                  │  # 环境工具
++		    └── tools                  │  # 插桩工具
+ 
+-		CORON open for you forever, hope some day you will join us.
+-		  * BBS    : http://bbs.rom.baidu.com/forum-184-1.html
++		 CORON永远为你敞开,希望有一天你会加入我们
++		  * BBS论坛 : http://bbs.rom.baidu.com/forum-184-1.html
+ 		  * QQ     : 307235260
+ 		  * GitHub : https://github.com/baidurom/manifest
+ 
+@@ -66,80 +66,77 @@
+ 
+ 	<item name="fire" code="99">
+ 		<detail>
+-		Porting ROM in one step. All the progress of ROM porting will be concentrated in to one step.
++		一键适配百度云OS，所有适配ROM的步骤都会集中在这一步！
+ 		</detail>
+ 	</item>
+ 
+ 	<item name="help" code="98">
+ 		<detail>
+-		Type `help name' to find out more about the `name'.
++		输入 `help name' 去找到更多关于 `name'的.
+ 		</detail>
+ 	</item>
+ 
+ 	<item name="config" code="10">
+ 		<detail>
+-		Genearate the configuration for a new device.
+-		A Makefile containing all the configurations will be generated. 
++		为新设备生成一个Makefile，这个Makefile将会包含所有的配置. 
+ 		</detail>
+ 	</item>
+ 
+ 	<item name="newproject" code="20">
+ 		<detail>
+-		Generate the new project for a new device.
+-		Only used when setup your device project.
++		为新设备建立一个新项目，只能用在为设备建立新项目上.
+ 		</detail>
+ 	</item>
+ 
+ 	<item name="patchall" code="30">
+ 		<detail>
+-		Patch all the changes.
+-		Incorpate all the changes from BOSP to AOSP into VENDOR.
+-		 BOSP  : Code of Baidu Open Source Project
+-		 AOSP  : Code Android Open Source Project
+-		 VENDOR: Code pulled out from the device
++		应用所有的百度的修改(插桩).
++		将AOSP和BOSP产生的修改合并到原厂代码上.
++		 BOSP  : 百度开源代码
++		 AOSP  : 安卓开源代码
++		 VENDOR: 设备原厂代码
+ 
+-		The codes of VENDOR are located in the root directory of your device.
+-		The codes of AOSP and BOSP are located in the autopatch directory of your device.
++		原厂代码位于你的机型根目录.
++		AOSP和BOSP位于机型根目录的autopatch目录里.
+ 		</detail>
+ 	</item>
+ 
+ 	<item name="autofix" code="40">
+ 		<detail>
+-		Resolve conflicts.
+-		After patchall, conflicts might happen, autofix could help you
+-		to resolve some of them automatically.
++		解决冲突.
++		运行patchall之后, reject冲突就会发生, autofix会自动帮你解决冲突.
+ 		</detail>
+ 	</item>
+ 
+ 	<item name="fullota" code="50">
+ 		<detail>
+-		Fully make out the ota package.
+-		An OTA package will be generated, you could flash it into your device.
++		制作一个完整的刷机包.
++		一个完整的刷机包将会在out目录下生成，你应该把它刷入你的手机.
+ 		</detail>
+ 	</item>
+ 
+ 	<item name="upgrade" code="60">
+ 		<detail>
+-		Patch the upgrade changes. You could upgrade your device to the latest.
++		应用所有的更新修改，你可以升级你的设备到最新.
+ 		</detail>
+ 	</item>
+ 
+ 
+ 	<item name="porting" code="70">
+ 		<detail>
+-		Porting changes from an existing device to another.
++		从现有的设备参考制作百度云OS.
+ 		</detail>
+ 	</item>
+ 
+ 	<item name="clean" code="80" >
+ 	    <detail>
+-		Clean the project output.
++		清理项目输出的文件.
+ 		</detail>
+ 	</item>
+ 
+ 	<item name="cleanall" code="90" >
+ 		<detail>
+-		Clean all the project unneccessary files, inluding baidu/ and out/.
++		清理项目不需要的文件，包括机型目录下的baidu目录和out目录.
+ 		</detail>
+ 	</item>
+ 
+@@ -153,164 +150,164 @@
+ 
+ 	<item name="ERR_USB_NOT_CONNECTED" code="151">
+ 		<detail>
+-		Can not find device
++		找不到设备
+ 		</detail>
+ 		<solution>
+-		Please make sure your device has been connected.
++		请确认你的设备已经连接.
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_DEVICE_NOT_ROOTED" code="152">
+ 		<detail>
+-		Can not aquire ROOT permission
++		无法获取root权限
+ 		</detail>
+ 
+ 		<solution>
+-		See how to root your device:
++		前往查看如何为设备获取root权限:
+ 		[http://bbs.rom.baidu.com/thread-125299-1-1.html]
+ 
+-		You could also use tool to root:
++		你也可以使用工具去获取root权限:
+ 		[http://root.baidu.com]
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_UNPACK_BOOTIMG_FAILED" code="153">
+ 		<detail>
+-		Unpack bootimg failed. Your boot.img or recovery.img might be imformal that could not be unpacked out.
++		解包镜像失败，boot.img或者recovery.img非常规格式.
+ 		</detail>
+ 		<solution>
+-                Solution Advice:
++                建议解决方案:
+                 ----------------
+-		Using the following command to check whether your image can be unpacked:
++		使用以下命令来确认镜像是否能被CORON解包:
+ 		  $ unpack_bootimg recovery.img
+ 
+-		If unpack failed, use another recovery.img.
++		如果解包失败，请使用其他镜像或者上网搜索解包方式.
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_PACK_BOOTIMG_FAILED" code="154">
+ 		<detail>
+-		Pack bootimg failed. Your boot.img or recovery.img might be imformal that could not be packed back.
++		打包镜像失败，boot.img或者recovery.img非常规格式
+ 		</detail>
+ 		<solution>
+-                Solution Advice:
++                建议解决方案:
+                 ----------------
+-		Using the following command to check whether your image can be unpacked:
++		使用以下命令来确认镜像是否能被打包:
+ 		  $ pack_bootimg image_out/
+ 
+-		If pack failed, unpack your boot image again.
++		如果打包失败，请重新解包你的boot.img或者recovery.img.
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_DEVICE_BASE_NOT_FOUND" code="155">
+ 		<detail>
+-		devices/base not found!
++		找不到devices/base!
+ 		</detail>
+ 		<solution>
+-                Solution Advice:
++                建议解决方案:
+                 ----------------
+-		Make sure you have synced the base from coron, and the path is devices/base.
+-		If devices/base not exists, try to use "repo sync" to sync coron again.
++		请确认devices/base有一个coron base.
++		如果没有devices/base not, 请尝试使用 "repo sync" 去重新同步源码.
+ 
+-		Or, you could use the following command to get devices/base separately:
++		或者，你可以使用以下命令去单独同步devices/base:
+ 		 $ git clone https://github.com/baidurom/devices/base
+ 		</solution>
+ 	</item>
+ 	
+ 	<item name="ERR_PULL_BOOT_RECOVERY_FAILED" code="156">
+ 		<detail>
+-		Failed to pull boot.img and recovery.img from your phone.
++		无法从手机里拉取 boot.img 和 recovery.img.
+ 		</detail>
+ 		<solution>
+-		Check adb devices is fine and your phone is su root!
++		请确保adb正常工作并让你的设备获取root权限!
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_WRONG_PARAMETERS" code="157">
+ 		<detail>
+-		Wrong parameters for this command....
++		命令参数错误....
+ 		</detail>
+ 		<solution>
+-		Please read the usage of this command or ask for help in http://bbs.rom.baidu.com
++		请阅读这个命令的使用方法或者到百度云OS论坛寻求帮助 http://bbs.rom.baidu.com
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_AUTOCOM_FAILED" code="158">
+ 		<detail>
+-		Failed to autocomplete missed method in android.policy and Phone.
++		未能为android.policy 和 Phone自动补全方法.
+ 		</detail>
+ 		<solution>
+-		Please check you have Phone.apk and in vendor/system/app and it can be decode correctly.
+-			try $ apktool d vendor/system/app/Phone.apk
+-		If you don't have Phone.apk, it must be renamed to someoneelse, find it and rename to Phone.apk.
+-		if the decode of Phone.apk is failed, just remove the Phone.apk in vendor/system/app, then go on!
++		请检查是否有 Phone.apk 在 vendor/system/app 里，还要确认其是否能被反编译.
++			尝试输入 $ apktool d vendor/system/app/Phone.apk
++		如果你没有 Phone.apk, 那么它一定是被某人或者厂商修改了，请找到它并改名为 Phone.apk.
++		如果反编译失败，请删除它，然后继续.
+ 		</solution>
+ 	</item>
+ 	
+ 	<item name="ERR_METHODTOBOSP_FAILED" code="159">
+ 		<detail>
+-		Failed to replace method to bosp.
++		无法把函数方法替换成BOSP的.
+ 		</detail>
+ 		<solution>
+-		Make sure both of the vendor and bosp have this smali file!
+-		And the method name is fine, such as 
++		请确认原厂代码和BOSP中都含有这个smali文件!
++		如果函数方法是正确的, 就像这样 
+ 		$ methodtobosp services.jar.out/smali/com/android/server/am/ActivityManagerService.smali 'moveTaskToFront(IILandroid/os/Bundle;)V'
+ 		</solution>
+ 	</item>
+ 	
+ 	<item name="ERR_SMALITOBOSP_FAILED" code="160">
+ 		<detail>
+-		Failed to replace smali file to bosp.
++		无法把smali文件替换为BOSP的.
+ 		</detail>
+ 		<solution>
+-		Make sure both of the vendor and bosp have this smali file!
++		请确认原厂代码和BOSP中都含有这个smali文件!
+ 		</solution>
+ 	</item>
+ 	
+-	<item name="ERR_SMALITOBOSP_FAILED" code="160">
++	 <item name="ERR_SMALITOBOSP_FAILED" code="160">
+ 		<detail>
+-		Failed to replace smali file to bosp.
++		无法把smali文件替换为BOSP的.
+ 		</detail>
+ 		<solution>
+-		Make sure both of the vendor and bosp have this smali file!
++		请确认原厂代码和BOSP中都含有这个smali文件!
+ 		</solution>
+ 	</item>
+ 	
+ 	<item name="ERR_APKTOOL_BUILD_FAILED" code="161">
+ 		<detail>
+-		Failed to use apktool build apk back.
++		无法使用apktool回编译这个apk.
+ 		</detail>
+ 		<solution>
+-		Make sure you don't install any framework resource after you decode the apk,
+-		otherwise you should install the framework resource which match your apk, then build again
++		请确认你在反编译这个apk后没有再安装过任何资源框架,
++		你可以使用以下命令重新安装资源框架
+ 			$ ifdir xxx/system/framework
+-		Example: 
+-		If you want build out's apk, you better install out's framework first! 
++		例子: 
++		如果你想回编译原厂apk，那么你必须使用以下命令安装原厂的资源框架! 
+ 			$ ifdir out/merged_target_files/SYSTEM/framework/
+ 		</solution>
+ 	</item>
+ 	
+ 	<item name="ERR_APKTOOL_DECODE_FAILED" code="162">
+ 		<detail>
+-		Failed to use apktool d xxx.apk.
++		无法反编译这个apk.
+ 		</detail>
+ 		<solution>
+-		Make sure the destination directory doesn't exist! 
+-		And install framework resource first 
++		请确认目标文件夹不存在! 
++		还有，在反编译之前，你必须先安装资源框架.
+ 			$ ifdir xxx/system/framework
+-		Example: 
+-		If you want decode baidu's apk, you better install baidu's framework first! 
++		例子: 
++		如果你想反编译百度的apk，那么你必须先使用以下命令安装百度的资源框架! 
+ 			$ ifdir baidu/system/framework
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_DEODEX_FAILED" code="163">
+ 		<detail>
+-		Failed to deodex ota.zip/target-files.zip.
++		无法在ota.zip/target-files.zip里合并odex.
+ 		</detail>
+ 		<solution>
+-		You can try to update the smali.jar and baksmali.jar in tools/apktools/, which can be download from http://code.google.com
+-		If it doesn't work, you better find some other tools to deodex.
++		请更新在tools/apktools/里的smali.jar和baksmali.jar, 可以在这里下载 http://code.google.com
++		如果它无法工作 那么你可以寻找其他合并odex的工具.
+ 		</solution>
+ 	</item>	
+ 	
+--- help/help_config.xml
++++ help.new/help_config.xml
+@@ -4,18 +4,18 @@
+ 
+ 	<item name="ERR_NOT_FOUND" code="127">
+ 		<detail>
+-		Error: makeconfig, command not found
++		未能进行: makeconfig, 找不到命令
+ 		</detail>
+ 		<solution>
+-		Solution Advice:
++		建议解决方案:
+ 
+-		1. Make sure you have setup enviornment by execute:
++		1. 请确认你是否运行了环境安装命令:
+ 		$ source build/envsetup.sh
+ 
+-		2. makeconfig must be executable, to check it:
++		2. 请确保makeconfig文件必须是可执行的:
+ 		$ ls -l build/tools/makeconfig
+ 
+-		you might make it executable by:
++		你可以这样让makeconfig变成可执行文件:
+ 		$ chmod a+x build/tools/makeconfig
+ 
+ 		</solution>
+@@ -23,28 +23,28 @@
+ 
+ 	<item name="ERR_MAKEFILE_EXIST" code="201">
+ 		<detail>
+-		Makefile already exist!
++		Makefile已经存在!
+ 		</detail>
+ 		<solution>
+-		Remove Makefile and Retry.
++		请把Makefile文件删除并最好准备.
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_OTA_INCOMPATIBLE" code="202">
+ 		<detail>
+-		The ota.zip is a incompatible ota package.
++		 这不是一个标准格式的卡刷包，coron不兼容该卡刷包！
+ 		</detail>
+ 		<solution>
+-		Check whether META-INF and system directory are in ota.zip
++		请检查META-INF和system文件夹是否在卡刷包里！
+ 		</solution>
+ 	</item>
+ 	
+ 	<item name="ERR_MISSION_FAILED" code="209">
+ 		<detail>
+-		Mission Failed, as catching a Runtime Error.
++		 任务失败了,抓到一个运行时发生的错误.
+ 		</detail>
+ 		<solution>
+-		Check the build log !
++		请检查日志文件(build log)!
+ 		</solution>
+ 	</item>
+ 
+--- help/help_fullota.xml
++++ help.new/help_fullota.xml
+@@ -4,20 +4,20 @@
+ <items category="fullota">
+ 	<item name="ERR_OTA_FROM_TARGET_FILES" code="51">
+ 		<detail>
+-		Failed to run ota_from_target_files to generate an ota zip from target-files.zip
++		 未能运行ota_from_target_files从target-files.zip生成一个ota.zip
+ 		</detail>
+ 		<solution>
+-		If the exception is java.lang.OutOfMemoryError, you should add the follow line to your Makefile before include $(PORT_ROOT)/main.mk
++		如果出现java.lang.OutOfMemoryError报错, 你应该在Makefile的include $(PORT_ROOT)/main.mk前面加上:
+ 			SIGN_OTA := false
+ 		</solution>
+ 	</item>	
+ 	
+ 	<item name="ERR_IMG_FROM_TARGET_FILES" code="52">
+ 		<detail>
+-		Failed to generate the system.img from target-files.zip.
++		未能从target-files.zip上生成一个system.img.
+ 		</detail>
+ 		<solution>
+-		You can add the follow line to your Makefile before include $(PORT_ROOT)/main.mk
++		你应该在Makefile的include $(PORT_ROOT)/main.mk前面加上:
+ 			NO_SYSTEM_IMG := true
+ 		</solution>
+ 	</item>	
+--- help/help_newproject.xml
++++ help.new/help_newproject.xml
+@@ -3,64 +3,64 @@
+ <items category="newproject">
+ 	<item name="ERR_NOT_PREPARE_RECOVERY_FSTAB" code="201">
+ 		<detail>
+-		Can not find recovery.fstab !
++		找不到recovery分区表文件 recovery.fstab !
+ 		</detail>
+ 		<solution>
+-		Prepare a recovery.fstab in current project directory !
++		请准备好一个recovery分区表文件(recovery.fstab)放入当前工程目录!
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_NOT_OTA_PACKAGE" code="202">
+ 		<detail>
+-		Can not find ota.zip !
++		找不到 ota.zip !
+ 		</detail>
+ 		<solution>
+-		Prepare a ota.zip in current project directory !
++		请准备好一个recovery卡刷包(ota.zip)放在当前工程目录下 !
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_OTA_INCOMPATIBLE" code="203">
+ 		<detail>
+-		The ota.zip is a incompatible ota package.
++		这不是一个标准格式的卡刷包，coron不兼容该卡刷包！
+ 		</detail>
+ 		<solution>
+-		Check whether META-INF and system directory are in ota.zip
++		请检查META-INF和system文件夹是否在卡刷包里！
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_NOT_OEM_TARGET" code="204">
+ 		<detail>
+-		Can not find out/oem_target_files.zip !
++		找不到 out/oem_target_files.zip !
+ 		</detail>
+ 		<solution>
+-		Make clean, and Retry !
++		输入Make clean, 并做好准备 !
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_MISSION_FAILED" code="209">
+ 		<detail>
+-		Mission Failed, as catching a Runtime Error.
++		 任务失败了,抓到一个运行时发生的错误.
+ 		</detail>
+ 		<solution>
+-		Check the build log !
++		请检查日志文件(build log)!
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_NOT_PREPARE_RECOVERY_IMG" code="211">
+ 		<detail>
+-		Can not find recovery.img !
++		找不到 recovery.img !
+ 		</detail>
+ 		<solution>
+-		Prepare a recovery.img or recovery.fstab in current project directory !
++		请准备好一个recovery镜像文件(recovery.img)或者recovery分区表文件(recovery.fstab)放在当前工程目录 !
+ 		</solution>
+ 	</item>
+ 
+ 	<item name="ERR_NOT_PREPARE_BOOT_IMG" code="212">
+ 		<detail>
+-		Can not find boot.img !
++		找不到 boot.img !
+ 		</detail>
+ 		<solution>
+-		Prepare a boot.img in current project directory, Or not set boot in vendor_modify_images[Makefile] !
++		请准备好一个boot.img内核镜像放在当前工程目录或者不要在Makefile的vendor_modify_images上设置boot !
+ 		</solution>
+ 	</item>
+ 
+--- help/help_patchall.xml
++++ help.new/help_patchall.xml
+@@ -8,16 +8,16 @@
+ 
+ <items category="patchall">
+ 
+-	<item name="NO_CONFLICT" code="31">
++	 <item name="NO_CONFLICT" code="31">
+ 		<detail>
+ 		  ────────────────────────────────────────────────────────────────────────────────────
+ 
+-		     Advice:
+-		      1. Although no conflict, mistakes still come out sometimes,
+-		         it depends on your device, VENDOR may change AOSP a lot.
++		     建议:
++		      1. 即使没有冲突(reject)，但是错误有时候还是会出现的,
++		         这取决于你的手机厂商，他们通常都会对AOSP进行很多修改.
+ 
+-		      2. You could go on to run fullota, flash the outcom into your device,
+-		         and then fix bugs depends on real-time logs.
++		      2. 你应该去运行fullota，刷入make出来的包,
++		         然后利用实时日志(log)去分析并修复bug.
+ 
+ 		  ────────────────────────────────────────────────────────────────────────────────────
+ 		</detail>
+@@ -27,26 +27,25 @@
+ 		<detail>
+ 		  ────────────────────────────────────────────────────────────────────────────────────
+ 
+-		     Advice:
+-		      1. Each conflict is marked out like:
++		     建议:
++		      1. 每个冲突(conflict)都会像这样标记出来:
+ 
+ 		         &lt;&lt;&lt;&lt;&lt;&lt;&lt; VENDOR
+-		           Codes of VENDOR
++		           原厂代码
+ 		         =======
+-		           Codes of BOSP
++		           BOSP
+ 		         &gt;&gt;&gt;&gt;&gt;&gt;&gt; BOSP
+ 
+-		         you'd better resolve all conflicts before going on with the following work.
++		         你最好在解决所有的冲突之前进行如下操作.
+ 
+-		      2. You might follow three steps to resolve conflicts manually:
+-		         - compare VENDOR and REJECT to find out where conflicts happened;
+-		         - compare AOSP   and BOSP   to find out where Baidu changes;
+-		         - compare VENDOR and BOSP   to decide how to resolve conflicts.
++		      2. 你可以按照这3个步骤来解决冲突:
++		         - 对比原厂代码和reject冲突来寻找哪里发生冲突;
++		         - 对比autopatch目录下的AOSP和BOSP来寻找百度云对AOSP作了什么修改;
++		         - 对比原厂代码和BOSP来决定应该怎样去解决冲突.
+ 
+-			  3. You might issue 'coron autofix' to resolve conflicts automatically
++			  3. 你可以使用'coron autofix'命令让它去自动解决冲突
+ 
+-			     If you do not know the definition of AOSP, BOSP or VENDOR, type the command
+-			     to see what are they:
++			     如果你不知道vendor(原厂代码)，AOSP，BOSP是什么，请输入以下命令去看他们是什么:
+ 			       $ coron help patchall
+ 		  ────────────────────────────────────────────────────────────────────────────────────
+ 		</detail>
+--- help/help_upgrade.xml
++++ help.new/help_upgrade.xml
+@@ -5,12 +5,12 @@
+ 		<detail>
+ 		  ────────────────────────────────────────────────────────────────────────────────────
+ 
+-		     Advice:
+-		      1. Although no conflict, mistakes still come out sometimes,
+-		         it depends on your device, VENDOR may change AOSP a lot.
++		     建议:
++		      1. 即使没有冲突(reject)，但是错误有时候还是会出现的,
++		         这取决于你的手机厂商，他们通常都会对AOSP进行很多修改.
+ 
+-		      2. You could go on to run fullota, flash the outcom into your device,
+-		         and then fix bugs depends on real-time logs.
++		      2. 你应该去运行fullota，刷入make出来的包,
++		         然后利用实时日志(log)去分析并修复bug.
+ 
+ 		  ────────────────────────────────────────────────────────────────────────────────────
+ 		</detail>
+@@ -20,21 +20,21 @@
+ 		<detail>
+ 		  ────────────────────────────────────────────────────────────────────────────────────
+ 
+-		     Advice:
+-		      1. Each conflict is marked out like:
++		     建议:
++		      1. 每个冲突(conflict)都会像这样标记出来:
+ 
+ 		         &lt;&lt;&lt;&lt;&lt;&lt;&lt; VENDOR
+-		           Codes of VENDOR
++		           原厂代码
+ 		         =======
+-		           Codes of BOSP
++		           BOSP代码
+ 		         &gt;&gt;&gt;&gt;&gt;&gt;&gt; BOSP
+ 
+-		         you'd better resolve all conflicts before going on with the following work.
++		         你最好在解决所有的冲突之前进行如下操作.
+ 
+-		      2. You might follow three steps to resolve conflicts:
+-		         - compare VENDOR and REJECT to find out where conflicts happened;
+-		         - compare AOSP   and BOSP   to find out where Baidu changes;
+-		         - compare VENDOR and BOSP   to decide how to resolve conflicts.
++		      2. 你可以按照这3个步骤来解决冲突:
++		         - 对比原厂代码和reject冲突来寻找哪里发生冲突;
++		         - 对比AOSP和BOSP来寻找百度云对AOSP做了什么修改;
++		         - 对比原厂代码和BOSP来决定应该怎样去解决冲突.
+ 
+ 		  ────────────────────────────────────────────────────────────────────────────────────
+ 		</detail>
